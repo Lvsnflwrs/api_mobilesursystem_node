@@ -1,6 +1,7 @@
-const conn = require('../config/DBHelper');
+const { poolPromise, sql } = require('../config/DBHelper');
 
-const getUserFaceData = () => {
+const getUserFaceData = async () => {
+    const pool = await poolPromise;
     const QUERY = `
         SELECT
             user_id,
@@ -12,14 +13,27 @@ const getUserFaceData = () => {
             role
         FROM users
     `;
-    return conn.execute(QUERY);
+    
+    const result = await pool.request().query(QUERY);
+
+    return [result.recordset];
 }
 
 const insertUsers = async (adminId, name, email, phone, embeddings, role) => {
-    const QUERY = "INSERT INTO users (admin_id, name, email, phone, embeddings, role, created_at) VALUES (?, ?, ?, ?, ?, ?, NOW())";
+const pool = await poolPromise;
+    const QUERY = "INSERT INTO users (admin_id, name, email, phone, embeddings, role, created_at) VALUES (@admin_id, @name, @email, @phone, @embeddings, @role, GETDATE())";
+    
     try {
-        const [result] = await conn.execute(QUERY, [adminId, name, email, phone, embeddings, role]);
-        return result;
+        const result = await pool.request()
+            .input('admin_id', sql.Int, adminId)
+            .input('name', sql.VarChar, name)
+            .input('email', sql.VarChar, email)
+            .input('phone', sql.VarChar, phone)
+            .input('embeddings', sql.VarChar(sql.MAX), embeddings)
+            .input('role', sql.VarChar, role)
+            .query(QUERY);
+
+        return result; 
     } catch (error) {
         console.error("DB Insert Error:", error);
         throw error;
