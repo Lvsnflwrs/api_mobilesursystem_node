@@ -1,5 +1,6 @@
 require("dotenv").config();
 const modelAuth = require("../models/auth");
+const modelFace = require("../models/faces")
 const faceController = require("../controller/facesController")
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
