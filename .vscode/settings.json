@@ -1,0 +1,4 @@
+{
+    "appService.defaultWebAppToDeploy": "/subscriptions/cd49ca31-af49-4c25-8416-0bb3626c4997/resourceGroups/appsvc_linux_southeastasia_basic/providers/Microsoft.Web/sites/api-mobilesursystem-ta",
+    "appService.deploySubpath": "."
+}

@@ -6,7 +6,10 @@ const { webSocketHandler } = require("./controller/webSocketController");
 
 const PORT = process.env.PORT || 3000;
 
-const server = http.createServer();
+const server = http.createServer((req, res) => {
+    res.writeHead(200, { "Content-Type": "text/plain" });
+    res.end("API Berjalan Normal");
+});
 
 const wss = new WebSocketServer({ server: server });
 
