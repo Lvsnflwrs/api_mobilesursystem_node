@@ -51,24 +51,28 @@ const updateAdminProfile = async (ws, msg) => {
         }
 
         const [result] = await modelAuth.updateAdmin(adminId, updateData); 
-
-        if (result.affectedRows > 0) {
-            return ws.send(
-                JSON.stringify({
-                    type: "profile_update",
-                    success: true,
-                    message: "Profile updated successfully",
-                })
+            const isUpdateSuccess = result && (
+                (result.affectedRows !== undefined && result.affectedRows >= 0) ||
+                (result.rowsAffected !== undefined && result.rowsAffected.length > 0) ||
+                (result === true)
             );
-        } else {
-            return ws.send(
-                JSON.stringify({
-                    type: "profile_update",
-                    success: false,
-                    message: "Failed to update profile or admin not found",
-                })
-            );
-        }
+            if (isUpdateSuccess) {
+                return ws.send(
+                    JSON.stringify({
+                        type: "profile_update",
+                        success: true,
+                        message: "Profile updated successfully",
+                    })
+                );
+            } else {
+                return ws.send(
+                    JSON.stringify({
+                        type: "profile_update",
+                        success: false,
+                        message: "Failed to update profile or admin not found",
+                    })
+                );
+            }
     } catch (error) {
         console.error("Error in updateAdminProfile:", error);
         ws.send(
